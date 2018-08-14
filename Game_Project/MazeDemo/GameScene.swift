@@ -42,42 +42,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let imgBg = ["floor-glass-2", "floor-glass-2", "floor-glass-2", "floor-glass-2", "floor-glass-2", "floor-stone-2", "floor-stone-2", "floor-stone-2", "floor-stone-2", "floor-snow-2"] //BG Each Level
 
-    override func didMoveToView(view: SKView) {
-    	backgroundColor = SKColor.blackColor();
+    override func didMove(to view: SKView) {
+        backgroundColor = SKColor.black;
         startGame()
     }
 
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
     
-            if(!pressBtnOnLevelPage(location)){
+            if(!pressBtnOnLevelPage(location: location)){
                 //Not Press on Btn
                 lastTouchPosition = location;
             }
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             
-            if(!pressBtnOnLevelPage(location)){
+            if(!pressBtnOnLevelPage(location: location)){
                 //Not Press on Btn
                 lastTouchPosition = location;
             }
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastTouchPosition = nil
 
         if let touch = touches.first { //เวลาสัมผัสหลายๆนิ้ว จะคิดแค่นิ้วแรก
-        	let location = touch.locationInNode(self);
+            let location = touch.location(in: self);
             
             //Page
             if(currentPage == "home"){
-                if(btnPlay.containsPoint(location)){
+                if(btnPlay.contains(location)){
                     currentPage = "level";
                     currentLevel = 1;
                     resetScene();
@@ -85,17 +85,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }else if(currentPage == "level"){
                 
                 //Btn Pause
-                if(!btnPause.hidden && btnPause.containsPoint(location)){
-                    self.runAction(SKAction.runBlock(self.setPauseGame));
+                if(!btnPause.isHidden && btnPause.contains(location)){
+                    self.run(SKAction.run(self.setPauseGame));
                 }
                 
                 //Btn Resume
-                if(!btnResume.hidden && btnResume.containsPoint(location)){
+                if(!btnResume.isHidden && btnResume.contains(location)){
                     setPauseGame();
                 }
                 
                 //Btn Home Text
-                if(!btnHomeText.hidden && btnHomeText.containsPoint(location)){
+                if(!btnHomeText.isHidden && btnHomeText.contains(location)){
                     currentPage = "home";
                     setPauseGame();
                     resetScene();
@@ -103,7 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }else{
                 
                 //Btn Home
-                if(btnHome.containsPoint(location)){
+                if(btnHome.contains(location)){
                     currentPage = "home";
                     resetScene();
                 }
@@ -111,11 +111,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>?, with event: UIEvent?) {
         lastTouchPosition = nil
     }
    
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: CFTimeInterval) {
         if(!gameOver && !gamePause && currentPage == "level") {
     #if (arch(i386) || arch(x86_64))
             if let currentTouch = lastTouchPosition {
@@ -134,14 +134,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Press on Button or not
         
         if(currentPage == "level"){
-            if(!btnPause.hidden){
+            if(!btnPause.isHidden){
                 //if this btn is show
-                return btnPause.containsPoint(location);
+                return btnPause.contains(location);
             }
             
-            if(!btnResume.hidden){
+            if(!btnResume.isHidden){
                 //if this btn is show
-                btnResume.containsPoint(location);
+                btnResume.contains(location);
             }
         }
         
@@ -150,11 +150,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func setPauseGame(){
         gamePause = !gamePause;
-        btnPause.hidden = gamePause;
-        btnResume.hidden = !gamePause;
-        btnHomeText.hidden = !gamePause;
-        viewBgPause.hidden = !gamePause;
-        self.view?.paused = gamePause;
+        btnPause.isHidden = gamePause;
+        btnResume.isHidden = !gamePause;
+        btnHomeText.isHidden = !gamePause;
+        viewBgPause.isHidden = !gamePause;
+        self.view?.isHidden = gamePause;
     }
     
     func updateTextLife(){
@@ -178,14 +178,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //BGIndex
             let bgImg = SKSpriteNode(imageNamed: "bg-home");
-            bgImg.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame));
+            bgImg.position = CGPoint(x: self.frame.midX, y: self.frame.midY);
             bgImg.zPosition = -10;
             addChild(bgImg);
 
         	//Btn Play
             //btnPlay = SKSpriteNode(color: SKColor.redColor(), size: CGSize(width: 100, height: 100));
         	btnPlay = SKSpriteNode(imageNamed: "btn-play");
-        	btnPlay.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) - 70);
+        	btnPlay.position = CGPoint(x: self.frame.midX, y: self.frame.midY - 70);
         	addChild(btnPlay);
         }else if(currentPage == "level"){
         	//Level
@@ -200,44 +200,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 //View Top bar Menu
                 let viewTopBarMenu = SKSpriteNode(color: SKColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.7), size: CGSize(width: numCol * numSize, height: numSize));
-                viewTopBarMenu.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGFloat((numRow * numSize) - (numSize / 2)));
+                viewTopBarMenu.position = CGPoint(x: self.frame.midX, y: CGFloat((numRow * numSize) - (numSize / 2)));
                 viewTopBarMenu.zPosition = 9;
                 addChild(viewTopBarMenu);
                 
                 //Text Level and Life
                 lifeLabel = SKLabelNode(fontNamed: "Helvetica Neue")
-                lifeLabel.horizontalAlignmentMode = .Left
+                lifeLabel.horizontalAlignmentMode = .left
                 lifeLabel.position = CGPoint(x: numSize, y: (numRow * numSize) - 46);
                 lifeLabel.zPosition = 10;
                 addChild(lifeLabel)
                 
                 //View BG Pause Menu
                 viewBgPause = SKSpriteNode(color: SKColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.7), size: CGSize(width: numCol * numSize, height: numRow * numSize));
-                viewBgPause.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame));
+                viewBgPause.position = CGPoint(x: self.frame.midX, y: self.frame.midY);
                 viewBgPause.zPosition = 99;
                 addChild(viewBgPause);
-                viewBgPause.hidden = true;
+                viewBgPause.isHidden = true;
                 
                 //Btn Pause
                 btnPause = SKSpriteNode(imageNamed: "btn-pause");
-                btnPause.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGFloat((12 * numSize) - (numSize / 2)));
+                btnPause.position = CGPoint(x: self.frame.midX, y: CGFloat((12 * numSize) - (numSize / 2)));
                 btnPause.zPosition = 100;
                 addChild(btnPause);
                 
                 //Btn Resume
                 btnResume = SKSpriteNode(imageNamed: "btn-resume");
-                btnResume.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame));
+                btnResume.position = CGPoint(x: self.frame.midX, y: self.frame.midY);
                 btnResume.zPosition = 100;
                 addChild(btnResume);
-                btnResume.hidden = true;
+                btnResume.isHidden = true;
                 
                 //Btn Home Text
                 btnHomeText = SKSpriteNode(imageNamed: "btn-home-text");
-                btnHomeText.position.x = CGFloat(CGRectGetMidX(self.frame));
-                btnHomeText.position.y = CGFloat(CGRectGetMidY(self.frame) + 100);
+                btnHomeText.position.x = CGFloat(self.frame.midX);
+                btnHomeText.position.y = CGFloat(self.frame.midY + 100);
                 btnHomeText.zPosition = 100;
                 addChild(btnHomeText);
-                btnHomeText.hidden = true;
+                btnHomeText.isHidden = true;
                 
                 loadLevel()
                 creatPlayer()
@@ -263,13 +263,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //Player Img
             let toon = SKSpriteNode(imageNamed: "player-big")
-            toon.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+            toon.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
             toon.size = CGSize(width: 150, height: 150);
             addChild(toon)
 
         	//Btn Go Home
         	btnHome = SKSpriteNode(imageNamed: "btn-home");
-			btnHome.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) - 200);
+			btnHome.position = CGPoint(x: self.frame.midX, y: self.frame.midY - 200);
             btnHome.size = CGSize(width: 100, height: 100);
         	addChild(btnHome);
 
@@ -283,7 +283,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //Btn Go Home
             btnHome = SKSpriteNode(imageNamed: "btn-home");
-            btnHome.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame) - 70);
+            btnHome.position = CGPoint(x: self.frame.midX, y: self.frame.midY - 70);
             addChild(btnHome);
         }
 
@@ -326,7 +326,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         node.position = position
         node.zPosition = zIndex
         node.physicsBody = SKPhysicsBody(circleOfRadius: CGFloat(numSize / 2), center: CGPoint(x: 0, y: numSize / 2))
-        node.physicsBody!.dynamic = false
+        node.physicsBody!.isDynamic = false
         
         //type, wall, trap, item, finish
         
@@ -362,12 +362,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func loadLevel() {
     
-        if let levelPath = NSBundle.mainBundle().pathForResource("level\(currentLevel)", ofType: "txt"){
-            if let levelString = try? String(contentsOfFile: levelPath, usedEncoding: nil){
-                let lines = levelString.componentsSeparatedByString("\n")
+        if let levelPath = Bundle.main.path(forResource: "level\(currentLevel)", ofType: "txt"){
+            if let levelString = try? String(contentsOfFile: levelPath){
+                let lines = levelString.components(separatedBy: "\n")
             
-                for (row, line) in lines.reverse().enumerate() {
-                    for (column, letter) in line.characters.enumerate() {
+                for (row, line) in lines.reversed().enumerated() {
+                    for (column, letter) in line.enumerated() {
                         let position = CGPoint(x: (64 * column) + 32 , y: (64 * row))
                         
                         let background = SKSpriteNode(imageNamed: imgBg[currentLevel - 1])
@@ -383,55 +383,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             playerSpawn.y += 32
                             
                         case "A":
-                            createProp("prop-box-1", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-box-1", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "B":
-                            createProp("prop-chest-1", position: position, zIndex: CGFloat(-row), type: "item")
+                            createProp(name: "prop-chest-1", position: position, zIndex: CGFloat(-row), type: "item")
 
                         case "C":
-                            createProp("prop-pad-1", position: position, zIndex: CGFloat(-row), type: "pad")
+                            createProp(name: "prop-pad-1", position: position, zIndex: CGFloat(-row), type: "pad")
 
                         case "D":
-                            createProp("prop-pad-2", position: position, zIndex: CGFloat(-row), type: "pad")
+                            createProp(name: "prop-pad-2", position: position, zIndex: CGFloat(-row), type: "pad")
 
                         case "E":
-                            createProp("prop-stone-1", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-stone-1", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "F":
-                            createProp("prop-stone-2", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-stone-2", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "G":
-                            createProp("prop-stone-3", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-stone-3", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "H":
-                            createProp("prop-trap-1", position: position, zIndex: CGFloat(-row), type: "trap")
+                            createProp(name: "prop-trap-1", position: position, zIndex: CGFloat(-row), type: "trap")
 
                         case "I":
-                            createProp("prop-trap-2", position: position, zIndex: CGFloat(-row), type: "trap")
+                            createProp(name: "prop-trap-2", position: position, zIndex: CGFloat(-row), type: "trap")
 
                         case "J":
-                            createProp("prop-tree-1", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-tree-1", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "K":
-                            createProp("prop-tree-2", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-tree-2", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "L":
-                            createProp("prop-tree-3", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-tree-3", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "M":
-                            createProp("prop-tree-4", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-tree-4", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "N":
-                            createProp("prop-tree-5", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-tree-5", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "O":
-                            createProp("prop-tree-6", position: position, zIndex: CGFloat(-row), type: "wall")
+                            createProp(name: "prop-tree-6", position: position, zIndex: CGFloat(-row), type: "wall")
 
                         case "P":
-                            createProp("prop-water-1", position: position, zIndex: CGFloat(-numRow), type: "trap")
+                            createProp(name: "prop-water-1", position: position, zIndex: CGFloat(-numRow), type: "trap")
 
                         case "Q":
-                            createProp("prop-warp-1", position: position, zIndex: CGFloat(-row), type: "finish")
+                            createProp(name: "prop-warp-1", position: position, zIndex: CGFloat(-row), type: "finish")
                             
                         default: break
                             
@@ -446,20 +446,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
 	func didBeginContact(contact: SKPhysicsContact){
 		if contact.bodyA.node == player {
-			playerCollidedWithNode(contact.bodyB.node!)
+            playerCollidedWithNode(node: contact.bodyB.node!)
        	}
         else if contact.bodyB.node == player {
-           	playerCollidedWithNode(contact.bodyA.node!)
+            playerCollidedWithNode(node: contact.bodyA.node!)
        	}
    	}
     
     func playerDie(node: SKNode){
-        let move = SKAction.moveTo(CGPoint(x: node.position.x, y: node.position.y + 32) , duration: 0.25)
-        let scale = SKAction.scaleTo(0.0001, duration: 0.25)
+        let move = SKAction.move(to: CGPoint(x: node.position.x, y: node.position.y + 32) , duration: 0.25)
+        let scale = SKAction.scale(to: 0.0001, duration: 0.25)
         let remove = SKAction.removeFromParent()
         let sequence = SKAction.sequence([move, scale, remove])
         
-        player.runAction(sequence){ [unowned self] in
+        player.run(sequence){ [unowned self] in
             self.creatPlayer()
             self.gameOver = false
         }
@@ -467,10 +467,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
 	func playerCollidedWithNode(node: SKNode){
 		if node.name == "trap"{
-			player.physicsBody?.dynamic = false
+            player.physicsBody?.isDynamic = false
 			gameOver = true
 			life -= 1
-            playerDie(node)
+            playerDie(node: node)
 		}
 		else if node.name == "item" {
 			node.removeFromParent()
